@@ -3,6 +3,23 @@ import smtplib
 import os
 from dotenv import load_dotenv
 
+def fix(text:str):
+    words=text.split()
+    new_words=[]
+    new_text=""
+    for word in words:
+        try:
+            encoded_word=word.encode("latin1")
+            new_words.append(encoded_word.decode("utf-8"))
+        except:
+            new_words.append(word)
+            continue
+    for i in range(0,len(new_words)-1):
+        new_text+=new_words[i]
+        new_text+=" "
+    new_text+=new_words[len(new_words)-1]
+    return new_text
+
 #Insert company name and stock symbol
 COMPANY="Tesla"
 COMPANY_SYMBOL="TSLA"
@@ -47,12 +64,12 @@ if difference_percentage>5:
 
 
     if diff > 0:
-        headline = f"{COMPANY} stock increased {difference_percentage}%"
+        headline = f"{COMPANY} stock increased {round(difference_percentage,2)}%"
     else:
-        headline = f"{COMPANY} stock decreased {difference_percentage}%"
+        headline = f"{COMPANY} stock decreased {round(difference_percentage,2)}%"
 
     for item in formatted:
         with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
             connection.login(user=os.getenv("FROM_EMAIL"),password=os.getenv("PASSWORD"))
-            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=f"Subject: {headline}\n\n{item.encode("utf-8")}")
+            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=f"Subject: {headline}\n\n{fix(item)}")
