@@ -64,12 +64,12 @@ if difference_percentage>5:
 
 
     if diff > 0:
-        headline = f"{COMPANY} stock increased {round(difference_percentage,2)}%"
+        headline = f"{COMPANY} stock increased by {round(difference_percentage,2)}%"
     else:
-        headline = f"{COMPANY} stock decreased {round(difference_percentage,2)}%"
+        headline = f"{COMPANY} stock decreased by {round(difference_percentage,2)}%"
 
     for item in formatted:
         with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
             connection.login(user=os.getenv("FROM_EMAIL"),password=os.getenv("PASSWORD"))
-            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=f"Subject: {headline}\n\n{fix(item)}")
+            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=f"Subject: {headline}\n\n{fix(item).encode("ascii","ignore").decode("ascii","ignore")}...")
