@@ -2,6 +2,8 @@ import requests
 import smtplib
 import os
 from dotenv import load_dotenv
+from email.mime.text import MIMEText
+from email.header import Header
 
 def fix(text:str):
     words=text.split()
@@ -69,7 +71,9 @@ if difference_percentage>5:
         headline = f"{COMPANY} stock decreased by {round(difference_percentage,2)}%"
 
     for item in formatted:
+        message=MIMEText(fix(item),"plain","utf-8")
+        message['Subject']=Header(headline,"utf-8")
         with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
             connection.login(user=os.getenv("FROM_EMAIL"),password=os.getenv("PASSWORD"))
-            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=f"Subject: {headline}\n\n{fix(item).encode("ascii","ignore").decode("ascii","ignore")}...")
+            connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=message.as_string())
