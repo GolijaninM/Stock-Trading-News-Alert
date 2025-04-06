@@ -43,7 +43,8 @@ stock_parameters={
 
 news_parameters={
     "qInTitle":COMPANY,
-    "apiKey":news_api_key
+    "apiKey":news_api_key,
+    "sortBy":"publishedAt"
 }
 
 stocks_response=requests.get(url=stock_market_endpoint, params=stock_parameters)
