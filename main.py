@@ -62,7 +62,7 @@ if difference_percentage>5:
     articles=news_response.json()["articles"]
     first_three_articles=articles[:3]
 
-    formatted=[f"Headline: {item['title']}.\nBrief: {item['description']}" for item in first_three_articles]
+    formatted=[f"Headline: {item['title']}.\nBrief: {item['description']}\n{item["url"]}" for item in first_three_articles]
 
 
     if diff > 0:
