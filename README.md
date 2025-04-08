@@ -17,7 +17,7 @@ Before you run the script, you'll need:
 - [Alpha Vantage API key](https://www.alphavantage.co/support/#api-key)
 - [NewsAPI key](https://newsapi.org/register)
 
-## 💡 Recomended
+## 💡 Recommended
 Put the code on [PythonAnywhere](https://www.pythonanywhere.com/) to run it every day.
 
 
