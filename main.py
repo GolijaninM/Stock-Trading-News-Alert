@@ -5,6 +5,10 @@ from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.header import Header
 
+#Insert company name and stock symbol
+COMPANY="Tesla"
+COMPANY_SYMBOL="TSLA"
+
 def fix(text:str):
     words=text.split()
     new_words=[]
@@ -21,10 +25,6 @@ def fix(text:str):
         new_text+=" "
     new_text+=new_words[len(new_words)-1]
     return new_text
-
-#Insert company name and stock symbol
-COMPANY="Tesla"
-COMPANY_SYMBOL="TSLA"
 
 load_dotenv()
 
@@ -63,8 +63,7 @@ if difference_percentage>5:
     articles=news_response.json()["articles"]
     first_three_articles=articles[:3]
 
-    formatted=[f"Headline: {item['title']}.\nBrief: {item['description']}\n{item["url"]}" for item in first_three_articles]
-
+    formatted=[f"Headline: {item['title']}.\nBrief: {item['description']}\nLink: {item["url"]}" for item in first_three_articles]
 
     if diff > 0:
         headline = f"{COMPANY} stock increased by {round(difference_percentage,2)}%"
