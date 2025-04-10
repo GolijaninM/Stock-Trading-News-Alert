@@ -32,7 +32,7 @@ load_dotenv()
 stock_market_api_key= os.getenv("STOCK_MARKET_API_KEY")
 stock_market_endpoint= "https://www.alphavantage.co/query"
 news_api_key=os.getenv("NEWS_API_KEY")
-news_endpoint="https://newsapi.org/v2/everything"
+news_endpoint="https://newsapi.org/v2/top-headlines"
 
 #API parameters
 stock_parameters={
@@ -44,7 +44,8 @@ stock_parameters={
 news_parameters={
     "qInTitle":COMPANY,
     "apiKey":news_api_key,
-    "sortBy":"publishedAt"
+    "sortBy":"publishedAt",
+    "country":"us"
 }
 
 stocks_response=requests.get(url=stock_market_endpoint, params=stock_parameters)
@@ -63,7 +64,7 @@ if difference_percentage>5:
     articles=news_response.json()["articles"]
     first_three_articles=articles[:3]
 
-    formatted=[f"Headline: {item['title']}.\nBrief: {item['description']}\nLink: {item["url"]}" for item in first_three_articles]
+    formatted=[f"Headline: {item['title']}. {item['description']}\nLink: {item["url"]}" for item in first_three_articles]
 
     if diff > 0:
         headline = f"{COMPANY} stock increased by {round(difference_percentage,2)}%"
