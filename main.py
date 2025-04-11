@@ -9,6 +9,7 @@ from email.header import Header
 COMPANY="Tesla"
 COMPANY_SYMBOL="TSLA"
 
+#Turn possible latin1 characters into unicode
 def fix(text:str):
     words=text.split()
     new_words=[]
@@ -44,33 +45,42 @@ stock_parameters={
 news_parameters={
     "qInTitle":COMPANY,
     "apiKey":news_api_key,
-    "sortBy":"publishedAt",
-    "country":"us"
+    "sortBy":"publishedAt", #Get latest news
+    "country":"us" #Get news from US only
 }
 
+#Stock request
 stocks_response=requests.get(url=stock_market_endpoint, params=stock_parameters)
 stocks_response.raise_for_status()
 data=stocks_response.json()["Time Series (Daily)"]
 
+#Get closing prices from last 2 days
 data_list=[value for (key,value) in data.items()]
 yesterday_closing_price=float(data_list[0]["4. close"])
 day_before_yesterday_closing_price=float(data_list[1]["4. close"])
 
+#Calculate difference between closing prices
 diff=yesterday_closing_price-day_before_yesterday_closing_price
 difference_percentage=(abs(diff)/day_before_yesterday_closing_price)*100
 
+#Send email if difference>5%
 if difference_percentage>5:
+
+    #Get latest news
     news_response=requests.get(url=news_endpoint,params=news_parameters)
     articles=news_response.json()["articles"]
     first_three_articles=articles[:3]
 
+    #Format text for email
     formatted=[f"Headline: {item['title']}. {item['description']}\nLink: {item["url"]}" for item in first_three_articles]
 
+    #Format headline for email
     if diff > 0:
         headline = f"{COMPANY} stock increased by {round(difference_percentage,2)}%"
     else:
         headline = f"{COMPANY} stock decreased by {round(difference_percentage,2)}%"
 
+    #Send 3 latest headlines via email
     for item in formatted:
         message=MIMEText(fix(item),"plain","utf-8")
         message['Subject']=Header(headline,"utf-8")
