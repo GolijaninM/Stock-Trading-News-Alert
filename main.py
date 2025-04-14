@@ -4,12 +4,15 @@ import os
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.header import Header
+from datetime import datetime,timedelta
 
 #Insert company name and stock symbol
 COMPANY="Tesla"
 COMPANY_SYMBOL="TSLA"
 
-#Turn possible latin1 characters into unicode
+yesterday=datetime.now()-timedelta(days=1)
+
+#Turn possible latin1 characters into Unicode
 def fix(text:str):
     words=text.split()
     new_words=[]
@@ -33,7 +36,7 @@ load_dotenv()
 stock_market_api_key= os.getenv("STOCK_MARKET_API_KEY")
 stock_market_endpoint= "https://www.alphavantage.co/query"
 news_api_key=os.getenv("NEWS_API_KEY")
-news_endpoint="https://newsapi.org/v2/top-headlines"
+news_endpoint="https://newsapi.org/v2/everything"
 
 #API parameters
 stock_parameters={
@@ -45,8 +48,9 @@ stock_parameters={
 news_parameters={
     "qInTitle":COMPANY,
     "apiKey":news_api_key,
-    "sortBy":"publishedAt", #Get latest news
-    "country":"us" #Get news from US only
+    "sortBy":"popularity", #Get the most popular news
+    "language":"en", #Get news in english only
+    "from":yesterday.strftime('%Y-%m-%d') #Get news from yesterday
 }
 
 #Stock request
@@ -88,3 +92,4 @@ if difference_percentage>5:
             connection.starttls()
             connection.login(user=os.getenv("FROM_EMAIL"),password=os.getenv("PASSWORD"))
             connection.sendmail(from_addr=os.getenv("FROM_EMAIL"),to_addrs=os.getenv("TO_EMAIL"),msg=message.as_string())
+
